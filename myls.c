@@ -55,14 +55,7 @@ int main(int argc, char** argv)
 				putchar(ext_info.st_mode & (1 << (8-i)) ? "rwxrwxrwx"[i] : '-');
 			putchar('\t');
 		}
-		if(ext_info.st_mode & (1 << 14))
-			printf("\033[1;34m%s\033[1;0m", current_file);
-		else if( (ext_info.st_mode & (1 << 6)) && (ext_info.st_mode & (1 << 3)) && (ext_info.st_mode & 1) )
-			printf("\033[1;35m%s\033[1;0m", current_file);
-		else if(ext_info.st_mode & (1 << 6))
-			printf("\033[1;32m%s\033[1;0m", current_file);
-		else
-			printf("%s", current_file);
+		print_file(current_file, &ext_info);
 		putchar('\n');
 		
 	}
@@ -71,6 +64,8 @@ int main(int argc, char** argv)
 	closedir(dirptr);
 	return 0;
 }
+
+
 
 
 void set_flags(FLAGS* flags, const char* args)
@@ -84,4 +79,16 @@ void set_flags(FLAGS* flags, const char* args)
 				flags->ext_info = 1;
 				break;
 		}
+}
+
+
+void print_file(const char* filename, struct stat* file_info){
+    if(file_info->st_mode & (1 << 14))
+			printf("\033[1;34m%s\033[1;0m", filename);
+	else if( (file_info->st_mode & (1 << 6)) && (file_info->st_mode & (1 << 3)) && (file_info->st_mode & 1) )
+		printf("\033[1;35m%s\033[1;0m", filename);
+	else if(file_info->st_mode & (1 << 6))
+		printf("\033[1;32m%s\033[1;0m", filename);
+	else
+		printf("%s", filename);
 }
