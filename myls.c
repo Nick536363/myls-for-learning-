@@ -16,7 +16,8 @@ int main(int argc, char** argv)
 	char dirname[50] = {};
 	DIR* dirptr;
 	struct dirent* dir;
-	int total_info[2] = {};
+	int files_cnt = 0;
+	size_t files_size = 0;
 	if(argc == 1 || (argc == 2 && argv[1][0] == '-')){	
 		dirname[0] = '.';	
 		if(argc == 2) set_flags(&flags, argv[1]);
@@ -46,20 +47,15 @@ int main(int argc, char** argv)
 		sprintf(current_file, "%s/%s", dirname, dir->d_name);	
 		stat(current_file, &ext_info);
 		if(flags.ext_info){
-			total_info[0]++;		
-			printf("%zu\t", ext_info.st_size);
-			total_info[1] += ext_info.st_size;
-			if(ext_info.st_mode & (1 << 14))
-				putchar('d');
-			for(int i = 0; i <= 8; i++)
-				putchar(ext_info.st_mode & (1 << (8-i)) ? "rwxrwxrwx"[i] : '-');
-			putchar('\t');
+			print_extra(&ext_info);
+			files_cnt++;
+			files_size += ext_info.st_size;
 		}
 		print_file(current_file, &ext_info);
 		putchar('\n');
 		
 	}
-	if(flags.ext_info) printf("\033[1;31mTotal:\033[1;0m\n%d files\n%d bytes\n", total_info[0], total_info[1]);
+	if(flags.ext_info) printf("\033[1;31mTotal:\033[1;0m\n%d files\n%ld bytes\n", files_cnt, files_size);
 	
 	closedir(dirptr);
 	return 0;
@@ -91,4 +87,15 @@ void print_file(const char* filename, struct stat* file_info){
 		printf("\033[1;32m%s\033[1;0m", filename);
 	else
 		printf("%s", filename);
+}
+
+
+void print_extra(struct stat* file_info)
+{
+	printf("%zu\t", file_info->st_size);
+	if(file_info->st_mode & (1 << 14))
+		putchar('d');
+	for(int i = 0; i <= 8; i++)
+		putchar(file_info->st_mode & (1 << (8-i)) ? "rwxrwxrwx"[i] : '-');
+		putchar('\t');
 }
