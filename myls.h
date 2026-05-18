@@ -1,5 +1,5 @@
 #pragma once
-
+#include <sys/stat.h>
 typedef struct 
 {
 	unsigned show_hidden: 1;
@@ -7,3 +7,4 @@ typedef struct
 } FLAGS;
 
 void set_flags(FLAGS*, const char*);
+void print_file(const char*, struct stat*);
