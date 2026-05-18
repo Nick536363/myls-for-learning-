@@ -51,7 +51,8 @@ int main(int argc, char** argv)
 			files_cnt++;
 			files_size += ext_info.st_size;
 		}
-		print_file(current_file, &ext_info);
+		if(flags.full_path) print_file(current_file, &ext_info);
+		else print_file(dir->d_name, &ext_info);
 		putchar('\n');
 		
 	}
@@ -73,6 +74,9 @@ void set_flags(FLAGS* flags, const char* args)
 				break;
 			case 'l':
 				flags->ext_info = 1;
+				break;
+			case 'f':
+				flags->full_path = 1;
 				break;
 		}
 }
