@@ -8,3 +8,4 @@ typedef struct
 
 void set_flags(FLAGS*, const char*);
 void print_file(const char*, struct stat*);
+void print_extra(struct stat*);
