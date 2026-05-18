@@ -4,6 +4,7 @@ typedef struct
 {
 	unsigned show_hidden: 1;
 	unsigned ext_info: 1;
+	unsigned full_path: 1;
 } FLAGS;
 
 void set_flags(FLAGS*, const char*);
