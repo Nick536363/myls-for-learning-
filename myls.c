@@ -83,11 +83,11 @@ void set_flags(FLAGS* flags, const char* args)
 
 
 void print_file(const char* filename, struct stat* file_info){
-    if(file_info->st_mode & (1 << 14))
+    if(S_ISDIR(file_info->st_mode))
 			printf("\033[1;34m%s\033[1;0m", filename);
-	else if( (file_info->st_mode & (1 << 6)) && (file_info->st_mode & (1 << 3)) && (file_info->st_mode & 1) )
+	else if( (file_info->st_mode & S_IXUSR ) && (file_info->st_mode & S_IXGRP) && (file_info->st_mode & S_IXOTH) )
 		printf("\033[1;35m%s\033[1;0m", filename);
-	else if(file_info->st_mode & (1 << 6))
+	else if(file_info->st_mode & (S_IXUSR))
 		printf("\033[1;32m%s\033[1;0m", filename);
 	else
 		printf("%s", filename);
@@ -96,10 +96,13 @@ void print_file(const char* filename, struct stat* file_info){
 
 void print_extra(struct stat* file_info)
 {
+	int permissions[] = {S_IRUSR, S_IWUSR, S_IXUSR, S_IRGRP, S_IWGRP, S_IXGRP, S_IROTH, S_IWOTH, S_IXOTH};
 	printf("%zu\t", file_info->st_size);
-	if(file_info->st_mode & (1 << 14))
+	if(S_ISDIR(file_info->st_mode))
 		putchar('d');
+	else
+		putchar('-');
 	for(int i = 0; i <= 8; i++)
-		putchar(file_info->st_mode & (1 << (8-i)) ? "rwxrwxrwx"[i] : '-');
-		putchar('\t');
+		putchar(file_info->st_mode & (permissions[i]) ? "rwxrwxrwx"[i] : '-');
+	putchar('\t');
 }
