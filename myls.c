@@ -45,7 +45,8 @@ int main(int argc, char** argv)
 			continue;	
 		struct stat ext_info;
 		sprintf(current_file, "%s/%s", dirname, dir->d_name);	
-		stat(current_file, &ext_info);
+		if(stat(current_file, &ext_info) == -1)
+			perror(flags.full_path ? current_file : dir->d_name);
 		if(flags.ext_info){
 			print_extra(&ext_info);
 			files_cnt++;
