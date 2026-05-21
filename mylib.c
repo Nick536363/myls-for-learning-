@@ -47,3 +47,41 @@ void print_extra(struct stat* file_info)
 		putchar(file_info->st_mode & (permissions[i]) ? "rwxrwxrwx"[i] : '-');
 	putchar('\t');
 }
+
+
+int ls_dir(const char* dirname, FLAGS* flags){
+	DIR* dirptr = opendir(dirname);
+	struct dirent* dir;
+	char current_file[100] = {};
+    int files_cnt = 0;
+	size_t files_size = 0;
+
+    
+	if(dirptr == NULL){
+		perror(dirname);
+		return -1;
+	}
+	
+	
+	while((dir = readdir(dirptr)) != NULL){
+		if(dir->d_name[0] == '.' && !flags->show_hidden)
+			continue;	
+		struct stat ext_info;
+		snprintf(current_file, sizeof(current_file), "%s/%s", dirname, dir->d_name);	
+		if(stat(current_file, &ext_info) == -1){
+			perror(flags->full_path ? current_file : dir->d_name);
+			continue;
+		}
+		if(flags->ext_info){
+			print_extra(&ext_info);
+			files_cnt++;
+			files_size += ext_info.st_size;
+		}
+		if(flags->full_path) print_file(current_file, &ext_info);
+		else print_file(dir->d_name, &ext_info);
+		putchar('\n');
+	}
+	if(flags->ext_info) printf("\033[1;31mTotal:\033[1;0m\n%d files\n%ld bytes\n", files_cnt, files_size);
+	
+	closedir(dirptr);
+}
