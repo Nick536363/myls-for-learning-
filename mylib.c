@@ -56,7 +56,7 @@ int ls_dir(const char* dirname, FLAGS* flags){
     int files_cnt = 0;
 	size_t files_size = 0;
 
-    
+
 	if(dirptr == NULL){
 		perror(dirname);
 		return -1;
@@ -84,4 +84,29 @@ int ls_dir(const char* dirname, FLAGS* flags){
 	if(flags->ext_info) printf("\033[1;31mTotal:\033[1;0m\n%d files\n%ld bytes\n", files_cnt, files_size);
 	
 	closedir(dirptr);
+}
+
+
+int ls_file(const char* filepath, FLAGS* flags)
+{
+    struct stat fileinfo;
+    if(stat(filepath, &fileinfo) == -1){
+        perror(filepath);
+        return -1;
+    }
+	char* last_slash  = strrchr(filepath, '/');
+
+    if(flags->ext_info)
+		print_extra(&fileinfo);
+	if(flags->full_path || !last_slash)
+		print_file(filepath, &fileinfo);
+	else{
+		if(last_slash){
+			char filename[100] = {};
+    		snprintf(filename, sizeof(filename), "%s", last_slash+1);
+			print_file(filename, &fileinfo);
+		}
+	} 
+	
+    putchar('\n');
 }
