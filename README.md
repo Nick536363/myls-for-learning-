@@ -1,4 +1,4 @@
-# Own LS written in C
+# A simple implementation of the ls utility written in C
 
 ## About
 
@@ -127,8 +127,8 @@ $
 
 ## Notes
 
-The programm accepts 1 file max with flags, so you can't type multiple files in arguments like that.
+The program accepts 1 file max with flags, so you can't type multiple files in arguments like that.
 
 ```bash
-./myls my_dir / /home/user # The programm will list files in my_dir and end up
+./myls my_dir / /home/user # The program will list files in my_dir and end up
 ```
